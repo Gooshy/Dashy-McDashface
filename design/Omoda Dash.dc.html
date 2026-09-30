@@ -1,0 +1,587 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/nocturne-f320a69f-c10b-408d-8406-9cd5622e3230/styles.css">
+<script src="_ds/nocturne-f320a69f-c10b-408d-8406-9cd5622e3230/_ds_bundle.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700;800&family=Share+Tech+Mono&display=swap">
+<style>body{margin:0;background:var(--color-bg);--bg:#000000;--panel:#0A0A0B;--ink:#F4F1EA;--mut:#9A948C;--dim:#34302C;--off:#1A0907;--line:#24211E;--red:#FF2B1C;--amb:#FFB21A;--grn:#1FE07A;--pur:#B566FF;--yel:#FFE03A;--blu:#3DA8FF;--tex:rgba(255,255,255,0.03)}a{color:var(--color-accent-300)}a:hover{color:var(--color-accent-200)}</style>
+</helmet>
+<div ref="{{ rootRef }}" style="min-height:100vh;box-sizing:border-box;padding:16px 20px;display:flex;flex-direction:column;gap:14px;background:var(--color-bg);color:var(--color-text);font-family:var(--font-body)">
+  <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px">
+    <div style="display:flex;flex-direction:column;gap:2px;margin-right:10px">
+      <span style="font-size:15px;font-weight:500">Omoda 9 telemetry dash</span>
+      <span style="font-size:12px;color:var(--color-neutral-400)">1920 × 720 · 60 s scripted loop · swipe the screen or tap tabs · ← → keys</span>
+    </div>
+    <div style="display:flex;flex-wrap:wrap;gap:6px">
+      <sc-for list="{{ states }}" as="s" hint-placeholder-count="7">
+        <button class="{{ s.cls }}" onClick="{{ s.go }}">{{ s.label }}</button>
+      </sc-for>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:6px">
+      <span data-k="phase" class="tag tag-neutral">Parked · auto-hold</span>
+      <span data-k="simt" style="font-family:ui-monospace,Menlo,monospace;font-size:12px;color:var(--color-neutral-400);width:52px">00.0 s</span>
+      <button class="btn btn-secondary" onClick="{{ toggleHold }}">{{ holdLabel }}</button>
+      <button class="{{ nightCls }}" onClick="{{ setNight }}">Night</button>
+      <button class="{{ dayCls }}" onClick="{{ setDay }}">Day</button>
+      <a href="Style Sheet.dc.html" style="font-size:13px;margin-left:6px">Style sheet →</a>
+    </div>
+  </div>
+
+  <div data-k="fit" style="position:relative;width:100%;height:540px">
+    <div data-k="screen" style="position:absolute;left:0;top:0;width:1920px;height:720px;background:var(--bg);overflow:hidden;transform-origin:0 0;font-family:'Share Tech Mono',monospace;color:var(--ink);user-select:none;touch-action:pan-y;box-shadow:0 0 0 1px var(--color-neutral-800), 0 20px 60px rgba(0,0,0,.5)">
+
+      <canvas data-k="cvShift" width="3744" height="64" style="position:absolute;left:24px;top:44px;width:1872px;height:32px"></canvas>
+
+      <div style="position:absolute;left:24px;right:24px;top:88px;height:48px;display:flex;align-items:center;gap:20px">
+        <div style="display:flex;gap:4px;height:48px">
+          <sc-for list="{{ tabs }}" as="tab" hint-placeholder-count="3">
+            <button onClick="{{ tab.go }}" style="all:unset;box-sizing:border-box;cursor:pointer;display:flex;align-items:center;padding:0 22px;font-family:'Share Tech Mono',monospace;font-size:28px;letter-spacing:.12em;color:{{ tab.col }};border-bottom:3px solid {{ tab.bar }}">{{ tab.label }}</button>
+          </sc-for>
+        </div>
+        <span style="font-size:28px;color:var(--dim);letter-spacing:-.12em">›››</span>
+        <div style="flex:1"></div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <span data-k="recDot" style="width:14px;height:14px;border-radius:50%;background:var(--red);box-shadow:0 0 12px var(--red)"></span>
+          <span data-k="recTxt" style="font-size:28px;letter-spacing:.06em;min-width:190px;white-space:nowrap">REC 00:00</span>
+        </div>
+        <span data-k="clock" style="font-size:28px;letter-spacing:.06em">--:--</span>
+        <div style="display:flex;gap:8px">
+          <button onClick="{{ startRec }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:44px;padding:0 16px;display:flex;align-items:center;border:1px solid var(--line);color:var(--mut);font-family:'Share Tech Mono',monospace;font-size:28px;letter-spacing:.06em;opacity:{{ startOp }}" style-hover="color:var(--ink);border-color:var(--mut)">START</button>
+          <button onClick="{{ stopRec }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:44px;padding:0 16px;display:flex;align-items:center;border:1px solid var(--line);color:var(--mut);font-family:'Share Tech Mono',monospace;font-size:28px;letter-spacing:.06em;opacity:{{ stopOp }}" style-hover="color:var(--ink);border-color:var(--mut)">STOP</button>
+          <button onClick="{{ exportRec }}" style="all:unset;box-sizing:border-box;cursor:pointer;height:44px;padding:0 16px;display:flex;align-items:center;border:1px solid var(--line);color:var(--mut);font-family:'Share Tech Mono',monospace;font-size:28px;letter-spacing:.06em" style-hover="color:var(--ink);border-color:var(--mut)">EXPORT</button>
+        </div>
+      </div>
+
+      <div onPointerDown="{{ onDown }}" style="position:absolute;left:0;top:148px;width:1920px;height:480px;overflow:hidden;cursor:grab">
+        <div data-k="track" style="display:flex;width:5760px;height:480px">
+
+          <div data-screen-label="RACE" style="position:relative;width:1920px;height:480px;flex:none">
+            <div style="position:absolute;left:24px;top:0;width:480px;height:480px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%)">
+              <div style="position:absolute;left:0;top:0;width:48px;height:3px;background:var(--red)"></div>
+              <div style="position:absolute;left:24px;top:20px;right:24px;display:flex;align-items:baseline;justify-content:space-between">
+                <div style="display:flex;align-items:baseline;gap:10px"><span style="font-size:28px;color:var(--mut);letter-spacing:.08em">LAT</span><span data-k="lat" style="font-size:40px">0.00</span><span data-k="latDir" style="font-size:28px;color:var(--mut);width:18px"></span></div>
+                <div style="display:flex;align-items:baseline;gap:10px"><span style="font-size:28px;color:var(--mut);letter-spacing:.08em">LON</span><span data-k="lon" style="font-size:40px">+0.00</span></div>
+              </div>
+              <canvas data-k="cvG" width="800" height="800" style="position:absolute;left:40px;top:72px;width:400px;height:400px"></canvas>
+            </div>
+            <svg width="24" height="440" style="position:absolute;left:516px;top:20px"><defs><pattern id="chevA" width="24" height="30" patternUnits="userSpaceOnUse"><polyline points="7,7 16,15 7,23" style="fill:none;stroke:var(--dim);stroke-width:3"></polyline></pattern></defs><rect width="24" height="440" fill="url(#chevA)"></rect></svg>
+
+            <div style="position:absolute;left:552px;top:0;width:816px;height:480px">
+              <div style="position:absolute;left:0;right:0;top:0;display:flex;justify-content:center;gap:20px">
+                <div style="display:flex;align-items:baseline;gap:14px;padding:10px 26px 10px 18px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%)">
+                  <span style="font-size:28px;color:var(--mut);letter-spacing:.06em">0–60</span><span data-k="t100" style="font-size:32px;width:84px">—.——</span><span data-k="d100" style="font-size:32px;width:96px"></span>
+                </div>
+              </div>
+              <div data-k="indL" style="position:absolute;left:8px;top:150px;width:48px;height:84px;background:var(--dim);clip-path:polygon(55% 0,100% 0,45% 50%,100% 100%,55% 100%,0 50%)"></div>
+              <div data-k="indR" style="position:absolute;right:8px;top:150px;width:48px;height:84px;background:var(--dim);clip-path:polygon(0 0,45% 0,100% 50%,45% 100%,0 100%,55% 50%)"></div>
+              <div style="position:absolute;left:60px;right:60px;top:70px;height:270px;display:flex;align-items:flex-end;justify-content:center;gap:18px">
+                <div data-k="speed" style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:340px;line-height:.78;letter-spacing:-.01em;transform:skewX(-9deg);width:470px;text-align:right">0</div>
+                <div style="display:flex;flex-direction:column;gap:6px;padding-bottom:6px"><span style="font-size:28px;color:var(--mut);letter-spacing:.1em">MPH</span></div>
+              </div>
+              <div style="position:absolute;left:0;right:0;top:360px;display:flex;align-items:baseline;justify-content:space-between">
+                <span style="font-size:28px;color:var(--grn);letter-spacing:.06em">◂ REGEN −60</span>
+                <div style="display:flex;align-items:baseline;gap:14px"><span data-k="kw" style="font-size:36px">— kW</span><span data-k="flow" style="font-size:28px;color:var(--mut);letter-spacing:.08em">PARKED</span></div>
+                <span style="font-size:28px;color:var(--amb);letter-spacing:.06em">+150 DRIVE ▸</span>
+              </div>
+              <canvas data-k="cvPower" width="1632" height="144" style="position:absolute;left:0;top:404px;width:816px;height:72px"></canvas>
+            </div>
+
+            <svg width="24" height="440" style="position:absolute;left:1380px;top:20px;transform:scaleX(-1)"><defs><pattern id="chevB" width="24" height="30" patternUnits="userSpaceOnUse"><polyline points="7,7 16,15 7,23" style="fill:none;stroke:var(--dim);stroke-width:3"></polyline></pattern></defs><rect width="24" height="440" fill="url(#chevB)"></rect></svg>
+
+            <div style="position:absolute;left:1416px;top:0;width:480px;height:200px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%)">
+              <div style="position:absolute;left:0;top:0;width:48px;height:3px;background:var(--red)"></div>
+              <span style="position:absolute;left:24px;top:20px;font-size:28px;color:var(--mut);letter-spacing:.08em">GEAR</span>
+              <div data-k="gear" style="position:absolute;left:36px;top:58px;font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:180px;line-height:.75;transform:skewX(-9deg)">D</div>
+              <div style="position:absolute;left:190px;top:20px;display:flex;flex-direction:column;gap:12px">
+                <span style="font-size:28px;color:var(--mut);letter-spacing:.08em">MODE</span>
+                <span data-k="mode" style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:56px;line-height:.9;transform:skewX(-9deg);letter-spacing:.02em">SMART</span>
+                <div style="display:flex;gap:10px;margin-top:4px">
+                  <span data-k="ev2" style="display:flex;align-items:center;height:44px;padding:0 14px;border:2px solid var(--grn);color:var(--grn);font-size:28px">EV</span>
+                  <span data-k="ahold" style="display:flex;align-items:center;height:44px;padding:0 14px;border:2px solid var(--dim);color:var(--dim);font-size:28px;letter-spacing:.04em">AUTO HOLD</span>
+                </div>
+              </div>
+            </div>
+            <div style="position:absolute;left:1416px;top:216px;width:480px;height:264px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel)">
+              <div style="position:absolute;left:66px;top:24px;width:150px;height:180px;background:var(--off);overflow:hidden">
+                <div data-k="brk" style="position:absolute;left:0;bottom:0;width:100%;height:0;background:var(--red);box-shadow:0 0 24px var(--red)"></div>
+              </div>
+              <span style="position:absolute;left:66px;top:216px;width:150px;text-align:center;font-size:28px;color:var(--mut);letter-spacing:.08em">BRAKE</span>
+              <div style="position:absolute;left:264px;top:24px;width:150px;height:180px;background:repeating-linear-gradient(135deg,var(--dim) 0 2px,transparent 2px 14px),var(--off);display:flex;align-items:center;justify-content:center;opacity:.7">
+                <span style="font-size:28px;color:var(--mut);background:var(--panel);padding:2px 8px">N/A</span>
+              </div>
+              <span style="position:absolute;left:250px;top:216px;width:178px;text-align:center;font-size:28px;color:var(--mut);letter-spacing:.08em">THROTTLE</span>
+            </div>
+          </div>
+
+          <div data-screen-label="ENERGY" style="position:relative;width:1920px;height:480px;flex:none">
+            <div style="position:absolute;left:24px;top:0;width:1080px;height:480px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%)">
+              <div style="position:absolute;left:0;top:0;width:48px;height:3px;background:var(--grn)"></div>
+              <span style="position:absolute;left:24px;top:20px;font-size:28px;color:var(--mut);letter-spacing:.08em">BATTERY SOC</span>
+              <div style="position:absolute;left:36px;top:66px;display:flex;align-items:flex-end;gap:6px">
+                <span data-k="socI" style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:280px;line-height:.75;transform:skewX(-9deg)">72</span>
+                <span data-k="socD" style="font-family:'Saira Condensed',sans-serif;font-weight:600;font-size:88px;line-height:.8;transform:skewX(-9deg);color:var(--mut)">.41</span>
+                <span style="font-size:44px;line-height:1;color:var(--mut);padding-left:6px">%</span>
+              </div>
+              <div style="position:absolute;right:48px;top:20px;display:flex;flex-direction:column;align-items:flex-end;gap:18px">
+                <span style="font-size:28px;color:var(--mut);letter-spacing:.08em">EV RANGE</span>
+                <div style="display:flex;align-items:baseline;gap:12px"><span data-k="range" style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:170px;line-height:.75;transform:skewX(-9deg)">95</span><span style="font-size:36px;color:var(--mut)">km</span></div>
+              </div>
+              <canvas data-k="cvBatt" width="2064" height="300" style="position:absolute;left:24px;top:306px;width:1032px;height:150px"></canvas>
+            </div>
+            <div style="position:absolute;left:1128px;top:0;width:768px;height:220px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%)">
+              <div style="position:absolute;left:0;top:0;width:48px;height:3px;background:var(--amb)"></div>
+              <div style="position:absolute;left:24px;top:20px;display:flex;gap:14px;align-items:baseline"><span style="font-size:28px;color:var(--mut);letter-spacing:.08em">CONSUMPTION</span><span style="font-size:28px;color:var(--dim)">kWh/100 km</span></div>
+              <div style="position:absolute;left:24px;right:24px;top:70px;display:grid;grid-template-columns:200px 200px 1fr;gap:16px;align-items:end">
+                <div style="display:flex;flex-direction:column;gap:12px"><span style="font-size:28px;color:var(--mut)">LIVE</span><span data-k="live" style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:96px;line-height:.8;transform:skewX(-9deg)">—</span></div>
+                <div style="display:flex;flex-direction:column;gap:12px"><span style="font-size:28px;color:var(--mut)">TRIP AVG</span><span data-k="avg" style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:96px;line-height:.8;transform:skewX(-9deg)">17.0</span></div>
+                <div style="display:flex;flex-direction:column;gap:12px;align-items:flex-end"><span style="font-size:28px;color:var(--mut)">Δ VS AVG</span><span data-k="cdelta" style="font-family:'Saira Condensed',sans-serif;font-weight:800;font-size:120px;line-height:.75;transform:skewX(-9deg);color:var(--mut)">—</span></div>
+              </div>
+            </div>
+            <div style="position:absolute;left:1128px;top:236px;width:768px;height:112px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel)">
+              <div style="position:absolute;left:24px;right:24px;top:18px;display:flex;justify-content:space-between;align-items:baseline">
+                <div style="display:flex;gap:12px;align-items:baseline"><span style="font-size:28px;color:var(--grn)">REGEN</span><span data-k="regenT" style="font-size:32px">03:08</span></div>
+                <span data-k="regenPct" style="font-size:28px;color:var(--mut)">18.2% REGEN</span>
+                <div style="display:flex;gap:12px;align-items:baseline"><span data-k="driveT" style="font-size:32px">14:02</span><span style="font-size:28px;color:var(--amb)">DRIVE</span></div>
+              </div>
+              <div style="position:absolute;left:24px;right:24px;top:66px;height:24px;background:var(--amb);opacity:.9">
+                <div data-k="regenBar" style="position:absolute;left:0;top:0;bottom:0;width:18%;background:var(--grn);box-shadow:4px 0 0 var(--bg)"></div>
+              </div>
+            </div>
+            <div style="position:absolute;left:1128px;top:364px;width:768px;height:116px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);display:flex;align-items:center;gap:32px;padding:0 24px;box-sizing:border-box">
+              <span data-k="evMode" style="padding:6px 18px;border:2px solid var(--grn);color:var(--grn);font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:56px;line-height:1;transform:skewX(-9deg)">EV</span>
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:28px;color:var(--mut)">ENGINE</span><span style="font-size:36px;color:var(--amb)">OFF</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:28px;color:var(--mut)">RPM</span><span style="font-size:36px;color:var(--mut)">—</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:28px;color:var(--mut)">TORQUE</span><span style="font-size:36px;color:var(--mut)">— Nm</span></div>
+              <div style="display:flex;flex-direction:column;gap:8px"><span style="font-size:28px;color:var(--mut)">POWER</span><span style="font-size:36px;color:var(--mut)">— kW</span></div>
+            </div>
+          </div>
+
+          <div data-screen-label="CAR" style="position:relative;width:1920px;height:480px;flex:none">
+            <div style="position:absolute;left:24px;top:0;width:600px;height:480px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%)">
+              <div style="position:absolute;left:0;top:0;width:48px;height:3px;background:var(--red)"></div>
+              <span style="position:absolute;left:24px;top:20px;font-size:28px;color:var(--mut);letter-spacing:.08em">TYRES psi</span>
+              <span style="position:absolute;right:40px;top:20px;font-size:28px;color:var(--dim)">PLACARD 36</span>
+              <svg width="180" height="380" viewBox="0 0 180 380" style="position:absolute;left:210px;top:78px">
+                <rect x="4" y="62" width="22" height="64" rx="6" style="fill:var(--grn)"></rect>
+                <rect x="154" y="62" width="22" height="64" rx="6" style="fill:var(--grn)"></rect>
+                <rect x="4" y="258" width="22" height="64" rx="6" style="fill:var(--grn)"></rect>
+                <rect x="154" y="258" width="22" height="64" rx="6" style="fill:var(--amb)"></rect>
+                <rect x="18" y="10" width="144" height="360" rx="54" style="fill:var(--panel);stroke:var(--mut);stroke-width:3"></rect>
+                <rect x="6" y="128" width="14" height="10" rx="3" style="fill:var(--mut)"></rect>
+                <rect x="160" y="128" width="14" height="10" rx="3" style="fill:var(--mut)"></rect>
+                <rect x="44" y="20" width="92" height="4" rx="2" style="fill:var(--ink)"></rect>
+                <path d="M36 118 Q90 96 144 118 L134 160 Q90 148 46 160 Z" style="fill:var(--dim)"></path>
+                <rect x="46" y="168" width="88" height="110" rx="10" style="fill:none;stroke:var(--line);stroke-width:3"></rect>
+                <path d="M46 286 Q90 296 134 286 L140 318 Q90 332 40 318 Z" style="fill:var(--dim)"></path>
+                <rect x="34" y="356" width="112" height="4" rx="2" style="fill:var(--red)"></rect>
+              </svg>
+              <div style="position:absolute;left:32px;top:136px;display:flex;flex-direction:column;gap:8px"><span style="font-size:28px;color:var(--mut)">FL</span><span style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:72px;line-height:.8;transform:skewX(-9deg);color:var(--grn)">36.2</span></div>
+              <div style="position:absolute;right:40px;top:136px;display:flex;flex-direction:column;gap:8px;align-items:flex-end"><span style="font-size:28px;color:var(--mut)">FR</span><span style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:72px;line-height:.8;transform:skewX(-9deg);color:var(--grn)">35.9</span></div>
+              <div style="position:absolute;left:32px;top:332px;display:flex;flex-direction:column;gap:8px"><span style="font-size:28px;color:var(--mut)">RL</span><span style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:72px;line-height:.8;transform:skewX(-9deg);color:var(--grn)">35.4</span></div>
+              <div style="position:absolute;right:40px;top:332px;display:flex;flex-direction:column;gap:8px;align-items:flex-end"><span style="font-size:28px;color:var(--amb)">RR LOW −2.9</span><span style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:72px;line-height:.8;transform:skewX(-9deg);color:var(--amb)">33.1</span></div>
+            </div>
+            <div style="position:absolute;left:648px;top:0;width:456px;height:480px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel)">
+              <span style="position:absolute;left:24px;top:20px;font-size:28px;color:var(--mut);letter-spacing:.08em">STEER</span>
+              <div style="position:absolute;left:218px;top:30px;width:20px;height:8px;background:var(--dim)"></div>
+              <svg width="220" height="220" viewBox="0 0 240 240" style="position:absolute;left:118px;top:44px">
+                <g data-k="wheel" style="transform-origin:120px 120px">
+                  <circle cx="120" cy="120" r="102" style="fill:none;stroke:var(--ink);stroke-width:16"></circle>
+                  <rect x="18" y="112" width="72" height="16" style="fill:var(--mut)"></rect>
+                  <rect x="150" y="112" width="72" height="16" style="fill:var(--mut)"></rect>
+                  <rect x="112" y="150" width="16" height="72" style="fill:var(--mut)"></rect>
+                  <circle cx="120" cy="120" r="32" style="fill:var(--dim)"></circle>
+                  <rect x="113" y="8" width="14" height="26" style="fill:var(--red)"></rect>
+                </g>
+              </svg>
+              <div style="position:absolute;left:24px;right:24px;top:282px;display:flex;align-items:baseline;justify-content:center;gap:16px">
+                <span data-k="steer" style="font-family:'Saira Condensed',sans-serif;font-weight:700;font-size:80px;line-height:.8;transform:skewX(-9deg)">0°</span>
+                <span data-k="steerDir" style="font-size:28px;color:var(--mut);width:100px">CENTRE</span>
+              </div>
+              <div style="position:absolute;left:24px;right:24px;top:376px;display:grid;grid-template-columns:1fr 1fr;gap:16px">
+                <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:28px;color:var(--mut)">YAW °/s</span><span data-k="yaw" style="font-size:44px">+0.0</span></div>
+                <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end"><span style="font-size:28px;color:var(--mut)">OUTSIDE</span><span data-k="temp" style="font-size:44px">17°C</span></div>
+              </div>
+            </div>
+            <div style="position:absolute;left:1128px;top:0;width:768px;height:344px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);clip-path:polygon(0 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%)">
+              <div style="position:absolute;left:0;top:0;width:48px;height:3px;background:var(--pur)"></div>
+              <div style="position:absolute;left:24px;right:24px;top:18px;display:grid;grid-template-columns:250px 150px 170px 1fr;row-gap:0;font-size:28px">
+                <span style="color:var(--mut);height:44px;letter-spacing:.06em">SESSION BESTS</span><span style="color:var(--mut);text-align:right">BEST</span><span style="color:var(--mut);text-align:right">THIS DRIVE</span><span style="color:var(--mut);text-align:right">Δ</span>
+                <span style="height:44px;display:flex;align-items:center;border-top:1px solid var(--line)">0–60 mph</span><span style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);color:var(--pur)">5.90</span><span data-k="s_t0100" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)">—</span><span data-k="x_t0100" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)"></span>
+                <span style="height:44px;display:flex;align-items:center;border-top:1px solid var(--line)">PEAK ACCEL g</span><span style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);color:var(--pur)">0.52</span><span data-k="s_acc" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)">—</span><span data-k="x_acc" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)"></span>
+                <span style="height:44px;display:flex;align-items:center;border-top:1px solid var(--line)">PEAK BRAKE g</span><span style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);color:var(--pur)">0.61</span><span data-k="s_brk" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)">—</span><span data-k="x_brk" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)"></span>
+                <span style="height:44px;display:flex;align-items:center;border-top:1px solid var(--line)">PEAK LATERAL g</span><span style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);color:var(--pur)">0.48</span><span data-k="s_lat" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)">—</span><span data-k="x_lat" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)"></span>
+                <span style="height:44px;display:flex;align-items:center;border-top:1px solid var(--line)">TOP SPEED</span><span style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line);color:var(--pur)">88</span><span data-k="s_top" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)">—</span><span data-k="x_top" style="display:flex;align-items:center;justify-content:flex-end;border-top:1px solid var(--line)"></span>
+              </div>
+            </div>
+            <div style="position:absolute;left:1128px;top:360px;width:768px;height:120px;background:repeating-linear-gradient(45deg,var(--tex) 0 2px,transparent 2px 6px),repeating-linear-gradient(-45deg,var(--tex) 0 2px,transparent 2px 6px),var(--panel);display:grid;grid-template-columns:1fr 1.3fr 1fr 1fr 0.8fr;gap:12px;padding:20px 24px;box-sizing:border-box">
+              <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:28px;color:var(--mut)">TRIP km</span><span data-k="tDist" style="font-size:40px">14.2</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:28px;color:var(--mut)">TIME</span><span data-k="tTime" style="font-size:40px">0:18:24</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:28px;color:var(--mut)">mph</span><span data-k="tAvg" style="font-size:40px">46</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:28px;color:var(--mut)">kWh</span><span data-k="tCons" style="font-size:40px">17.0</span></div>
+              <div style="display:flex;flex-direction:column;gap:10px"><span style="font-size:28px;color:var(--mut)">ODO</span><span style="font-size:40px;color:var(--mut)">—</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div style="position:absolute;left:24px;top:644px;width:1872px;height:52px;display:flex;gap:8px">
+        <div data-k="lpL" style="flex:none;width:100px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:32px;letter-spacing:-.1em">◂◂◂</div>
+        <div data-k="lpPark" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">PARK</div>
+        <div data-k="lpDrive" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">DRIVE</div>
+        <div data-k="lpRegen" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">REGEN</div>
+        <div data-k="lpRegenLvl" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">REGEN HIGH</div>
+        <div data-k="lpMode" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">SMART MODE</div>
+        <div data-k="lpHold" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">AUTO HOLD</div>
+        <div data-k="lpBrake" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">BRAKE</div>
+        <div data-k="lpEv" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">EV</div>
+        <div data-k="lpData" style="flex:1;min-width:0;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:28px;letter-spacing:.04em;white-space:nowrap">DATA LINK</div>
+        <div data-k="lpR" style="flex:none;width:100px;display:flex;align-items:center;justify-content:center;box-sizing:border-box;border:1px solid var(--line);background:var(--off);color:var(--dim);font-size:32px;letter-spacing:-.1em">▸▸▸</div>
+      </div>
+
+      <sc-if value="{{ hasToast }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;right:24px;top:148px;padding:12px 20px;background:var(--panel);border:1px solid var(--grn);color:var(--grn);font-size:28px;letter-spacing:.04em">{{ toast }}</div>
+      </sc-if>
+      <div data-k="scan" style="position:absolute;left:0;top:0;width:1920px;height:720px;pointer-events:none;background:repeating-linear-gradient(0deg,rgba(255,255,255,.028) 0 1px,transparent 1px 4px)"></div>
+      <div data-k="flash" style="position:absolute;left:0;top:0;width:1920px;height:720px;pointer-events:none;box-shadow:inset 0 0 0 12px var(--red), inset 0 0 140px rgba(255,40,20,.35);opacity:0"></div>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;powerSource&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Flow only (today)&quot;,&quot;Simulated kW&quot;],&quot;default&quot;:&quot;Flow only (today)&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;scanlines&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;},&quot;startPage&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;RACE&quot;,&quot;ENERGY&quot;,&quot;CAR&quot;],&quot;default&quot;:&quot;RACE&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  TH = {
+    night:{bg:'#000000',panel:'#0A0A0B',ink:'#F4F1EA',mut:'#9A948C',dim:'#34302C',off:'#1A0907',line:'#24211E',red:'#FF2B1C',amb:'#FFB21A',grn:'#1FE07A',pur:'#B566FF',yel:'#FFE03A',blu:'#3DA8FF',tex:'rgba(255,255,255,0.03)'},
+    day:{bg:'#EEECE6',panel:'#FFFFFF',ink:'#050505',mut:'#4A4540',dim:'#C9C4BA',off:'#DEDAD1',line:'#CFC9BE',red:'#D0120A',amb:'#A96400',grn:'#00874A',pur:'#7420D6',yel:'#806A00',blu:'#0057C2',tex:'rgba(0,0,0,0.035)'}
+  };
+  BEST = {t050:3.30,t0100:5.90,acc:0.52,brk:0.61,lat:0.48,top:88};
+  STATES = [['Parked',3],['Hard accel',10.2],['Indicator on',20.2],['Cornering',25.5],['No data',31.2],['Regen braking',40],['Reverse',51]];
+  state = {page:0,theme:'night',hold:false,active:null,rec:true,toast:''};
+  rootRef = el => { this.root = el; };
+
+  sm(a,b,x){ const u=Math.min(1,Math.max(0,(x-a)/(b-a))); return u*u*(3-2*u); }
+
+  componentDidMount(){
+    this.k={}; this.root.querySelectorAll('[data-k]').forEach(el=>{ this.k[el.getAttribute('data-k')]=el; });
+    this.cache={}; this.ctx={};
+    ['cvShift','cvPower','cvG','cvBatt','cvScan'].forEach(n=>{ const c=this.k[n]; if(c){ const x=c.getContext('2d'); x.setTransform(2,0,0,2,0,0); this.ctx[n]=x; } });
+    this.buildTable();
+    this.simT=0; this.soc=72.41; this.trip={dist:14.2,time:1104,kwh:2.41,regenS:188,driveS:842}; this.consSm=16;
+    this.sess={}; this.launch={}; this.trail=[]; this.lamps=new Float32Array(32); this.scanPh=0; this.pubT={};
+    this.rx={}; this.d={}; this.snap(0);
+    this.recStart=Date.now();
+    this.applyTheme();
+    const sp=['RACE','ENERGY','CAR'].indexOf(this.props.startPage);
+    if(sp>0) this.setState({page:sp}); else this.setTrack(0,false);
+    this.fit(); this.ro=new ResizeObserver(()=>this.fit()); this.ro.observe(this.k.fit); this.ro.observe(this.root); setTimeout(()=>this.fit(),50); setTimeout(()=>this.fit(),400);
+    this.onRes=()=>this.fit(); window.addEventListener('resize',this.onRes);
+    this.onKey=e=>{ const p=this.state.page; if(e.key==='ArrowRight'&&p<2) this.setState({page:p+1}); if(e.key==='ArrowLeft'&&p>0) this.setState({page:p-1}); };
+    window.addEventListener('keydown',this.onKey);
+    this.last=performance.now();
+    const loop=now=>{ try{ this.tick(now); }catch(e){ if(!this.err){ this.err=1; console.error(e&&e.message, e&&e.stack); } } this.raf=requestAnimationFrame(loop); };
+    this.raf=requestAnimationFrame(loop);
+    this.iv=setInterval(()=>this.slow(),500); this.slow();
+  }
+  componentWillUnmount(){ cancelAnimationFrame(this.raf); clearInterval(this.iv); this.ro&&this.ro.disconnect(); window.removeEventListener('resize',this.onRes); window.removeEventListener('keydown',this.onKey); }
+  componentDidUpdate(pp,ps){ if(ps.theme!==this.state.theme) this.applyTheme(); if(ps.page!==this.state.page) this.setTrack(0,true); }
+
+  applyTheme(){ this.th=this.TH[this.state.theme]; const s=this.k.screen; if(!s) return; for(const [k,v] of Object.entries(this.th)) s.style.setProperty('--'+k,v); }
+  fit(){ const f=this.k.fit,s0=this.k.screen; if(!f||!s0) return; const w=f.clientWidth; if(!w) return; this.fitW=w; const s=Math.max(0.2,Math.min(w/1920,(window.innerHeight-110)/720)); this.scale=s; s0.style.transform=`scale(${s})`; s0.style.left=((w-1920*s)/2)+'px'; f.style.height=(720*s)+'px'; }
+  setTrack(dx,anim){ const t=this.k.track; if(!t) return; t.style.transition=anim?'transform .45s cubic-bezier(.2,.8,.2,1)':'none'; t.style.transform=`translateX(${-this.state.page*1920+dx}px)`; }
+  onDown(e){
+    const x0=e.clientX,s=this.scale||1; let dx=0;
+    const mv=ev=>{ dx=(ev.clientX-x0)/s; if(Math.abs(dx)>6) this.setTrack(dx,false); };
+    const up=()=>{ window.removeEventListener('pointermove',mv); window.removeEventListener('pointerup',up);
+      const p=this.state.page; let np=p; if(dx<-140&&p<2) np=p+1; else if(dx>140&&p>0) np=p-1;
+      if(np!==p) this.setState({page:np}); else this.setTrack(0,true); };
+    window.addEventListener('pointermove',mv); window.addEventListener('pointerup',up);
+  }
+
+  aProf(t){
+    const sm=(a,b,x)=>this.sm(a,b,x);
+    if(t>=8&&t<15) return 0.45*sm(8,8.35,t)*(1-sm(14.3,14.7,t));
+    if(t>=36&&t<46.5) return -0.3*sm(36,36.5,t)*(1-sm(45.9,46.5,t));
+    if(t>=15&&t<36) return 0.012*Math.sin(t*1.7)+0.008*Math.sin(t*4.3);
+    return 0;
+  }
+  buildTable(){
+    const N=6002,dt=0.01; this.tab=new Float32Array(N*2); let v=0;
+    for(let i=0;i<N;i++){ const t=i*dt; let a=this.aProf(t);
+      if(t<49){ v+=a*9.81*dt; if(v<=0){ v=0; if(a<0) a=0; } }
+      else if(t<55){ const u=Math.PI*(t-49)/6; v=8/3.6*Math.sin(u); a=-(8/3.6*Math.PI/6*Math.cos(u))/9.81; }
+      else { v=0; a=0; }
+      this.tab[i*2]=v*3.6; this.tab[i*2+1]=a; }
+  }
+  truth(t){
+    t=Math.max(0,Math.min(59.999,t||0));
+    const i=Math.min(5999,Math.floor(t*100)),f=t*100-i,tb=this.tab,sm=(a,b,x)=>this.sm(a,b,x);
+    const v=tb[i*2]+(tb[i*2+2]-tb[i*2])*f, a=tb[i*2+1]+(tb[i*2+3]-tb[i*2+1])*f, vm=v/3.6;
+    const gear=t<49?'D':t<55.5?'R':'P';
+    const bend=sm(22,23.5,t)*(1-sm(28.5,30,t)), mov=v>5?1:0;
+    let lat=-0.4*bend+0.012*Math.sin(t*2.3)*mov;
+    let steer=-38*bend+1.5*Math.sin(t*0.9)*mov, yaw=vm>1?lat*9.81/vm*57.3:0;
+    if(gear==='R'){ steer=240*sm(49.3,50.8,t)*(1-sm(53.5,55,t)); yaw=-vm*Math.tan(steer/15/57.3)/2.8*57.3; lat=-vm*(yaw/57.3)/9.81; }
+    let power;
+    if(gear==='R') power=v>0.3?4+vm*3:0;
+    else { const w=1150*a*9.81*vm+0.47*vm*vm*vm+216*vm; power=w>=0?Math.min(150,w/1000):Math.max(-60,w/1000*0.85); }
+    return {speed:v,longG:a,latG:lat,yaw,steer,power,gear,
+      brake:(t>=38&&t<46.3)||(t>=54.6&&t<56), ahold:t<8||(t>=46.3&&t<49),
+      indL:t>=19.5&&t<23.2, indR:false,
+      flow:(v<0.3||gear==='P')?'PARKED':(a<-0.04&&gear==='D')?'REGEN':'DRIVE',
+      mode:'SMART', ev:'EV', temp:17, drop:t>=31&&t<35.5};
+  }
+  integrate(T,dt){
+    if(!isFinite(T.speed)||!isFinite(T.power)) return;
+    const vm=T.speed/3.6,tr=this.trip; tr.dist+=vm*dt/1000; tr.time+=dt;
+    const kwh=T.power*dt/3600; tr.kwh+=kwh; this.soc=Math.max(0,this.soc-kwh/34.5*100);
+    if(T.flow==='REGEN') tr.regenS+=dt; else if(T.flow==='DRIVE') tr.driveS+=dt;
+    if(T.speed>8){ const inst=T.power/T.speed*100; this.consSm+=(inst-this.consSm)*(1-Math.exp(-dt/3)); }
+  }
+  tripRx(){ const r=this.rx,tr=this.trip; r.dist=tr.dist; r.time=tr.time; r.avgCons=tr.kwh/tr.dist*100; r.avgSpd=tr.dist/(tr.time/3600); r.regenS=tr.regenS; r.driveS=tr.driveS; r.live=this.consSm; }
+  snap(t){
+    const T=this.truth(t),r=this.rx; Object.assign(r,T); r.soc=this.soc; this.tripRx(); r.range=Math.round(this.soc*1.31);
+    ['speed','longG','latG','yaw','steer','power','soc','dist','time','avgCons','live','regenS','driveS','avgSpd'].forEach(k=>{ this.d[k]=r[k]; });
+    this.d.brakeF=r.brake?1:0; this.lastRx=performance.now(); this.trail=[];
+  }
+  jump(t,label){
+    this.simT=t; this.snap(t);
+    this.launch=(t>8&&t<14.7)?{running:true,t0:8.02}:{};
+    if(label==='No data') this.lastRx=performance.now()-2100;
+    this.pubT={}; this.setState({active:label});
+  }
+  launchLogic(T,t){
+    const L=this.launch,s=this.sess;
+    if(T.gear==='D'&&T.speed<0.2&&!L.running) L.armed=true;
+    if(L.armed&&!L.running&&T.speed>=0.2&&T.longG>0.1){ this.launch={running:true,t0:t}; return; }
+    if(L.running){ let el=t-L.t0; if(el<0) el+=60; L.el=el;
+      if(L.t50==null&&T.speed>=48.28){ L.t50=el; s.t050=Math.min(s.t050??99,el); }
+      if(T.speed>=96.56){ L.t100=el; L.running=false; s.t0100=Math.min(s.t0100??99,el); }
+      if(el>20||T.longG<-0.05) L.running=false; }
+  }
+  phaseName(t){
+    return t<8?'Parked · auto-hold':t<14.7?'Launch 0.45 g':t<19.5?'Cruise':t<22?'Indicator left':t<30?'Left bend 0.4 g':t<31?'Cruise':t<35.5?'Data dropout':t<36?'Cruise':t<46?'Regen braking 0.3 g':t<49?'Stopped · auto-hold':t<55.5?'Reverse':'Parked';
+  }
+  S(k,v){ if(this.cache[k]!==v){ this.cache[k]=v; const el=this.k[k]; if(el) el.textContent=v; } }
+  P(k,p,v){ const c=k+'|'+p; if(this.cache[c]!==v){ this.cache[c]=v; const el=this.k[k]; if(el) el.style[p]=v; } }
+  slow(){
+    if(this.k.fit&&this.k.fit.clientWidth!==this.fitW) this.fit();
+    const n=new Date(),p=x=>String(x).padStart(2,'0');
+    this.S('clock',p(n.getHours())+':'+p(n.getMinutes()));
+    if(this.state.rec){ const e=Math.floor((Date.now()-this.recStart)/1000); this.S('recTxt','REC '+p(Math.floor(e/60))+':'+p(e%60)); this.P('recDot','background','var(--red)'); this.P('recDot','boxShadow','0 0 12px var(--red)'); }
+    else { this.S('recTxt','STANDBY'); this.P('recDot','background','var(--dim)'); this.P('recDot','boxShadow','none'); }
+  }
+  lamp(k,on,c){
+    this.P(k,'color',on?`var(--${c})`:'var(--dim)');
+    this.P(k,'background',on?`color-mix(in srgb, var(--${c}) 18%, var(--bg))`:'var(--off)');
+    this.P(k,'borderColor',on?`var(--${c})`:'var(--line)');
+    this.P(k,'boxShadow',on?`0 0 18px color-mix(in srgb, var(--${c}) 45%, transparent), inset 0 0 14px color-mix(in srgb, var(--${c}) 30%, transparent)`:'none');
+  }
+  flash(){ const f=this.k.flash; if(!f) return; f.style.transition='none'; f.style.opacity='1'; requestAnimationFrame(()=>{ f.style.transition='opacity .35s ease-out'; f.style.opacity='0'; }); }
+
+  tick(now){
+    const dt=Math.max(0,Math.min(0.1,(now-this.last)/1000)); this.last=Math.max(this.last,now);
+    if(!isFinite(this.soc)) this.soc=72.41;
+    if(!isFinite(this.consSm)) this.consSm=16;
+    if(Object.values(this.trip).some(v=>!isFinite(v))) this.trip={dist:14.2,time:1104,kwh:2.41,regenS:188,driveS:842};
+    ['speed','longG','latG','yaw','steer','power','soc','dist','time','avgCons','live','regenS','driveS','avgSpd','brakeF'].forEach(k=>{ if(!isFinite(this.d[k])) this.d[k]=0; });
+    const hold=this.state.hold;
+    if(!hold){ this.simT+=dt; if(this.simT>=60) this.simT-=60; if(!(this.simT>=0)) this.simT=0; }
+    if(this.k.fit&&this.k.fit.clientWidth!==this.fitW) this.fit();
+    const t=this.simT,T=this.truth(t),rx=this.rx,d=this.d;
+    if(!hold) this.integrate(T,dt);
+    this.launchLogic(T,t);
+    if(!T.drop){
+      const pub=(k,hz,v)=>{ if(now-(this.pubT[k]??-1e9)>=1000/hz-2){ rx[k]=v; this.pubT[k]=now; this.lastRx=now; return true; } return false; };
+      pub('speed',10,T.speed); pub('longG',50,T.longG); pub('latG',50,T.latG); pub('yaw',10,T.yaw); pub('steer',10,T.steer); pub('power',10,T.power); pub('soc',2,this.soc);
+      if(pub('trip',2,0)) this.tripRx();
+      ['brake','gear','indL','indR','ahold','flow','mode','ev','temp'].forEach(k=>{ if(rx[k]!==T[k]) rx[k]=T[k]; });
+      rx.range=Math.round(this.soc*1.31);
+    }
+    const stale=now-this.lastRx>2000;
+    if(!stale){
+      const e=(k,tau)=>{ d[k]+=(rx[k]-d[k])*(1-Math.exp(-dt/tau)); };
+      e('speed',.12); e('longG',.07); e('latG',.07); e('yaw',.15); e('steer',.12); e('power',.15);
+      ['soc','dist','time','avgCons','live','regenS','driveS','avgSpd'].forEach(k=>e(k,.35));
+      d.brakeF+=((rx.brake?1:0)-d.brakeF)*(1-Math.exp(-dt/.04));
+      this.trail.push({x:d.latG,y:d.longG,t:now});
+      const s=this.sess;
+      if(rx.gear!=='R'){ s.acc=Math.max(s.acc||0,rx.longG); s.brk=Math.max(s.brk||0,-rx.longG); }
+      s.latL=Math.max(s.latL||0,-rx.latG); s.latR=Math.max(s.latR||0,rx.latG); s.top=Math.max(s.top||0,rx.speed*0.621371);
+      if(d.longG<-0.5&&!this.hb){ this.hb=true; this.flash(); } else if(d.longG>-0.4) this.hb=false;
+    }
+    while(this.trail.length&&now-this.trail[0].t>2000) this.trail.shift();
+
+    const fo=(this.props.powerSource??'Flow only (today)')!=='Simulated kW';
+    this.drawShift(); this.drawPower(fo); this.drawG(now); this.drawBatt(); this.drawScan(dt,now,stale);
+
+    const sg=(v,n)=>(v<0?'−':'+')+Math.abs(v).toFixed(n);
+    this.S('speed',String(Math.round(Math.abs(d.speed)*0.621371)));
+    this.S('gear',rx.gear); this.S('mode',rx.mode); this.S('ev2',rx.ev); this.S('evMode',rx.ev+' MODE');
+    const ah=rx.ahold?'var(--grn)':'var(--dim)'; this.P('ahold','color',ah); this.P('ahold','borderColor',ah);
+    this.S('lat',Math.abs(d.latG).toFixed(2)); this.S('latDir',d.latG<-0.03?'L':d.latG>0.03?'R':'');
+    this.S('lon',sg(d.longG,2));
+    this.S('kw',fo?'— kW':sg(d.power,0)+' kW');
+    this.S('flow',rx.flow); this.P('flow','color',rx.flow==='REGEN'?'var(--grn)':rx.flow==='DRIVE'?'var(--amb)':'var(--mut)');
+    const blink=(now%700)<380;
+    this.P('indL','background',rx.indL&&blink&&!stale?'var(--amb)':'var(--dim)');
+    this.P('indR','background',rx.indR&&blink&&!stale?'var(--amb)':'var(--dim)');
+    this.P('brk','height',(d.brakeF*100).toFixed(1)+'%');
+
+    const L=this.launch,B=this.BEST,s=this.sess;
+    const chip=(kv,kd,val,live,best,sb)=>{
+      if(val==null){ this.S(kv,'—.——'); this.S(kd,''); this.P(kv,'color','var(--ink)'); return; }
+      this.S(kv,val.toFixed(2));
+      if(live){ this.S(kd,''); this.P(kv,'color','var(--ink)'); return; }
+      const c=val<best?'var(--pur)':(sb!=null&&val<=sb+1e-6)?'var(--grn)':'var(--yel)';
+      this.S(kd,sg(val-best,2)); this.P(kd,'color',c); this.P(kv,'color',c);
+    };
+    const run=L.running;
+        chip('t100','d100',L.t100??(run?L.el:null),run&&L.t100==null,B.t0100,s.t0100);
+
+    const sc=Math.floor(d.soc*100); this.S('socI',String(Math.floor(sc/100))); this.S('socD','.'+String(sc%100).padStart(2,'0'));
+    this.S('range',String(rx.range));
+    const mv=d.speed>8;
+    this.S('live',mv?d.live.toFixed(1):'—'); this.S('avg',d.avgCons.toFixed(1));
+    if(mv){ const dl=Math.max(-99.9,Math.min(99.9,d.live-d.avgCons)); this.S('cdelta',sg(dl,1)); this.P('cdelta','color',dl<=0?'var(--grn)':'var(--red)'); }
+    else { this.S('cdelta','—'); this.P('cdelta','color','var(--mut)'); }
+    const rp=d.regenS/(d.regenS+d.driveS)*100;
+    this.P('regenBar','width',rp.toFixed(2)+'%'); this.S('regenPct',rp.toFixed(1)+'% REGEN');
+    const ms=x=>{ x=Math.floor(x); return String(Math.floor(x/60)).padStart(2,'0')+':'+String(x%60).padStart(2,'0'); };
+    this.S('regenT',ms(d.regenS)); this.S('driveT',ms(d.driveS));
+
+    this.P('wheel','transform',`rotate(${d.steer.toFixed(1)}deg)`);
+    const st=Math.round(d.steer); this.S('steer',(st<0?'−':st>0?'+':'')+Math.abs(st)+'°'); this.S('steerDir',st<-2?'LEFT':st>2?'RIGHT':'CENTRE');
+    this.S('yaw',sg(d.yaw,1)); this.S('temp',rx.temp+'°C');
+    this.S('tDist',d.dist.toFixed(1));
+    const tt=Math.floor(d.time); this.S('tTime',Math.floor(tt/3600)+':'+String(Math.floor(tt/60)%60).padStart(2,'0')+':'+String(tt%60).padStart(2,'0'));
+    this.S('tAvg',String(Math.round(d.avgSpd*0.621371))); this.S('tCons',d.avgCons.toFixed(1));
+    [['t0100',s.t0100,B.t0100,true,2],['acc',s.acc,B.acc,false,2],['brk',s.brk,B.brk,false,2],['lat',Math.max(s.latL||0,s.latR||0),B.lat,false,2],['top',s.top,B.top,false,0]].forEach(([k,v,b,low,n])=>{
+      if(v==null||(!low&&v<0.05)){ this.S('s_'+k,'—'); this.S('x_'+k,''); return; }
+      const better=low?v<b:v>b;
+      this.S('s_'+k,v.toFixed(n)); this.P('s_'+k,'color',better?'var(--pur)':'var(--grn)');
+      this.S('x_'+k,sg(v-b,n)); this.P('x_'+k,'color',better?'var(--pur)':'var(--yel)');
+    });
+
+    this.P('track','opacity',stale?'0.45':'1');
+    this.lamp('lpL',rx.indL&&blink&&!stale,'amb'); this.lamp('lpR',rx.indR&&blink&&!stale,'amb');
+    this.lamp('lpPark',rx.flow==='PARKED','red'); this.lamp('lpDrive',rx.flow==='DRIVE','amb'); this.lamp('lpRegen',rx.flow==='REGEN','grn');
+    this.lamp('lpHold',rx.ahold,'grn'); this.lamp('lpRegenLvl',true,'grn'); this.lamp('lpMode',rx.mode==='SMART','blu'); this.S('lpMode',rx.mode+' MODE'); this.lamp('lpBrake',rx.brake,'red'); this.lamp('lpEv',rx.ev==='EV','grn');
+    this.lamp('lpData',true,stale?'amb':'grn'); this.S('lpData',stale?'NO DATA':'DATA LINK');
+    this.P('scan','display',(this.props.scanlines??true)&&this.state.theme==='night'?'block':'none');
+    this.S('phase',stale?'NO DATA (stale > 2 s)':this.phaseName(t));
+    this.S('simt',t.toFixed(1).padStart(4,'0')+' s');
+  }
+
+  drawShift(){
+    const c=this.ctx.cvShift; if(!c) return;
+    const th=this.th,N=36,W=1872,H=32,g=8,w=(W-(N-1)*g)/N;
+    const pct=Math.max(0,this.d.power)/150,lit=Math.round(pct*N),max=pct>=0.97;
+    if(max&&!this.wasMax) this.pulse=1; this.wasMax=max; this.pulse=Math.max(0,(this.pulse||0)-0.05);
+    c.clearRect(0,0,W,H);
+    for(let i=0;i<N;i++){ const x=i*(w+g),on=i<lit||max,col=max?th.blu:(i<N*0.6?th.grn:th.red);
+      c.beginPath(); c.moveTo(x+5,0); c.lineTo(x+w,0); c.lineTo(x+w-5,H); c.lineTo(x,H); c.closePath();
+      c.shadowBlur=0; c.fillStyle=th.off; c.fill();
+      if(on){ c.fillStyle=col; c.shadowColor=col; c.shadowBlur=12+30*this.pulse; c.fill(); } }
+    c.shadowBlur=0;
+  }
+  drawPower(fo){
+    const c=this.ctx.cvPower; if(!c) return;
+    const th=this.th,W=816,H=72,nR=12,nD=30,g=6,zg=20,w=(W-zg-(nR+nD-2)*g)/(nR+nD);
+    const p=this.d.power,flow=this.rx.flow;
+    c.clearRect(0,0,W,H);
+    const seg=(x,k,col,on,al)=>{ const h=26+46*((k+1)/nD); c.shadowBlur=0; c.globalAlpha=1; c.fillStyle=th.off; c.fillRect(x,H-h,w,h);
+      if(on){ c.globalAlpha=al; c.fillStyle=col; c.shadowColor=col; c.shadowBlur=al>0.5?12:0; c.fillRect(x,H-h,w,h); } };
+    for(let i=0;i<nR;i++){ const k=nR-1-i; seg(i*(w+g),k,th.grn,fo?flow==='REGEN':(p<0&&(k+0.5)*5<-p),fo?0.35:1); }
+    const x0=nR*(w+g)-g+zg;
+    for(let j=0;j<nD;j++) seg(x0+j*(w+g),j,j<18?th.amb:th.red,fo?flow==='DRIVE':(p>0&&(j+0.5)*5<p),fo?0.35:1);
+    c.globalAlpha=1; c.shadowBlur=0; c.fillStyle=th.ink; c.fillRect(nR*(w+g)-g+zg/2-1.5,0,3,H);
+  }
+  drawG(now){
+    const c=this.ctx.cvG; if(!c) return;
+    const th=this.th,o=200,R=176,F=0.6,B=this.BEST,s=this.sess;
+    c.clearRect(0,0,400,400); c.lineWidth=2;
+    [0.2,0.4].forEach(r=>{ c.strokeStyle=th.line; c.beginPath(); c.arc(o,o,r/F*R,0,7); c.stroke(); });
+    c.strokeStyle=th.mut; c.beginPath(); c.arc(o,o,R,0,7); c.stroke();
+    c.strokeStyle=th.line; c.beginPath(); c.moveTo(o-R,o); c.lineTo(o+R,o); c.moveTo(o,o-R); c.lineTo(o,o+R); c.stroke();
+    c.fillStyle=th.mut; c.font="28px 'Share Tech Mono', monospace"; c.textAlign='left'; c.textBaseline='middle';
+    c.fillText('ACC',o+14,o-R+36); c.fillText('BRK',o+14,o+R-36); c.fillText('L',o-R+14,o-22); c.textAlign='right'; c.fillText('R',o+R-14,o-22);
+    const P=(gx,gy)=>[o+Math.max(-1,Math.min(1,gx/F))*R,o-Math.max(-1,Math.min(1,gy/F))*R];
+    c.strokeStyle=th.pur; c.lineWidth=5;
+    const tk=(p,h)=>{ c.beginPath(); if(h){ c.moveTo(p[0]-16,p[1]); c.lineTo(p[0]+16,p[1]); } else { c.moveTo(p[0],p[1]-16); c.lineTo(p[0],p[1]+16); } c.stroke(); };
+    tk(P(0,B.acc),1); tk(P(0,-B.brk),1); tk(P(-B.lat,0),0); tk(P(B.lat,0),0);
+    c.fillStyle=th.grn;
+    const dm=p=>{ c.beginPath(); c.moveTo(p[0],p[1]-10); c.lineTo(p[0]+10,p[1]); c.lineTo(p[0],p[1]+10); c.lineTo(p[0]-10,p[1]); c.fill(); };
+    if(s.acc>0.05) dm(P(0,s.acc)); if(s.brk>0.05) dm(P(0,-s.brk)); if(s.latL>0.05) dm(P(-s.latL,0)); if(s.latR>0.05) dm(P(s.latR,0));
+    const tr=this.trail; c.lineCap='round'; c.lineWidth=5; c.strokeStyle=th.red;
+    for(let i=1;i<tr.length;i++){ const a=1-(now-tr[i].t)/2000; if(a<=0) continue; const p1=P(tr[i-1].x,tr[i-1].y),p2=P(tr[i].x,tr[i].y);
+      c.globalAlpha=a*0.9; c.beginPath(); c.moveTo(p1[0],p1[1]); c.lineTo(p2[0],p2[1]); c.stroke(); }
+    c.globalAlpha=1; const pd=P(this.d.latG,this.d.longG);
+    c.fillStyle=th.ink; c.shadowColor=th.red; c.shadowBlur=22; c.beginPath(); c.arc(pd[0],pd[1],11,0,7); c.fill(); c.shadowBlur=0;
+  }
+  drawBatt(){
+    const c=this.ctx.cvBatt; if(!c) return;
+    const th=this.th,W=1032,H=150,N=20,nub=16,g=10,w=(W-nub-g-(N-1)*g)/N,soc=this.d.soc,f=soc/100*N;
+    const col=soc>20?th.grn:soc>10?th.amb:th.red;
+    c.clearRect(0,0,W,H);
+    for(let i=0;i<N;i++){ const x=i*(w+g); c.shadowBlur=0; c.fillStyle=th.off; c.fillRect(x,0,w,H);
+      const fl=Math.max(0,Math.min(1,f-i)); if(fl>0){ const h=H*fl; c.fillStyle=col; c.shadowColor=col; c.shadowBlur=14; c.fillRect(x,H-h,w,h); } }
+    c.shadowBlur=0; c.fillStyle=th.dim; c.fillRect(W-nub,H*0.3,nub,H*0.4);
+  }
+  drawScan(dt,now,stale){
+    const c=this.ctx.cvScan; if(!c) return;
+    const th=this.th,N=32,W=1872,H=52,g=8,lw=(W-(N-1)*g)/N,I=this.lamps,rx=this.rx;
+    let col;
+    if(!stale){
+      this.scanPh+=dt; const dec=Math.exp(-dt/0.085); for(let i=0;i<N;i++) I[i]*=dec;
+      const stamp=h=>{ for(let i=0;i<N;i++) I[i]=Math.max(I[i],Math.max(0,1-Math.abs(i-h)/1.1)); };
+      if(rx.flow==='DRIVE'){ const ph=(this.scanPh%2.4)/2.4,x=ph<.5?ph*2:2-ph*2; stamp(x*(N-1)); col=th.red; }
+      else if(rx.flow==='REGEN'){ const ph=(this.scanPh%1.4)/1.4; stamp((1-ph)*(N-1)); col=th.grn; }
+      else { const b=0.5-0.5*Math.cos(this.scanPh*2*Math.PI/3); for(let i=0;i<N;i++){ const cc=Math.exp(-Math.pow((i-(N-1)/2)/7,2)); I[i]=Math.max(I[i],(0.1+0.35*b)*cc); } col=th.red; }
+      this.scanCol=col;
+    } else col=th.amb;
+    const blink=(now%700)<380;
+    c.clearRect(0,0,W,H);
+    for(let i=0;i<N;i++){ const x=i*(lw+g); let v=I[i],lc=col;
+      if(!stale&&((rx.indL&&i<8)||(rx.indR&&i>=N-8))){ v=blink?1:0.06; lc=th.amb; }
+      c.shadowBlur=0; c.globalAlpha=1; c.fillStyle=th.off; c.fillRect(x,6,lw,H-12);
+      if(v>0.02){ c.globalAlpha=v; c.fillStyle=lc; c.shadowColor=lc; c.shadowBlur=26*v; c.fillRect(x,6,lw,H-12);
+        if(v>0.7&&this.state.theme==='night'){ c.shadowBlur=0; c.globalAlpha=(v-0.7)/0.3*0.55; c.fillStyle='#FFFFFF'; c.fillRect(x+6,18,lw-12,H-36); } } }
+    c.globalAlpha=1; c.shadowBlur=0;
+  }
+
+  renderVals(){
+    const {page,theme,hold,active,rec,toast}=this.state;
+    return {
+      rootRef:this.rootRef,
+      tabs:['RACE','ENERGY','CAR'].map((label,i)=>({label,go:()=>this.setState({page:i}),col:i===page?'var(--ink)':'var(--mut)',bar:i===page?'var(--red)':'transparent'})),
+      states:this.STATES.map(([label,t])=>({label,go:()=>this.jump(t,label),cls:active===label?'btn btn-primary':'btn btn-ghost'})),
+      onDown:e=>this.onDown(e),
+      holdLabel:hold?'Play loop':'Hold',
+      toggleHold:()=>this.setState({hold:!hold}),
+      nightCls:theme==='night'?'btn btn-primary':'btn btn-ghost',
+      dayCls:theme==='day'?'btn btn-primary':'btn btn-ghost',
+      setNight:()=>this.setState({theme:'night'}),
+      setDay:()=>this.setState({theme:'day'}),
+      startRec:()=>{ if(rec) return; this.recStart=Date.now(); this.sess={}; this.setState({rec:true},()=>this.slow()); },
+      stopRec:()=>{ if(rec) this.setState({rec:false},()=>this.slow()); },
+      exportRec:()=>{ const n=new Date(),p=x=>String(x).padStart(2,'0');
+        const name='drive_'+n.getFullYear()+p(n.getMonth()+1)+p(n.getDate())+'_'+p(n.getHours())+p(n.getMinutes())+'.csv';
+        clearTimeout(this.tt); this.setState({toast:'SAVED '+name}); this.tt=setTimeout(()=>this.setState({toast:''}),3000); },
+      startOp:rec?'0.35':'1', stopOp:rec?'1':'0.35',
+      hasToast:!!toast, toast
+    };
+  }
+}
+</script>
+</body>
+</html>
+
