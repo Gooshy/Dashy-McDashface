@@ -1,5 +1,7 @@
 # Dashy McDashface
 
+> **Unofficial, and entirely at your own risk.** Not affiliated with or endorsed by Omoda, Jaecoo, Chery, Desay SV or any other maker. It reads undocumented parts of the car and can change a driving setting. No warranty, no liability: read the [Disclaimer](#disclaimer) before you install it.
+
 A live driver's dashboard for the Omoda 9 plug-in hybrid's centre screen (Desay SV head unit, Android 11, 1920 × 720). The look is F1 onboard telemetry crossed with Knight Rider.
 
 ## What's on screen
@@ -78,3 +80,22 @@ The head unit blocks installs over ADB, so:
 | `docs/DASHBOARD-PROMPT.md` | The design brief. |
 
 `core` is copied from the OmodaBoard recorder, where the car's channels are identified. When channels are added there, copy `core/` across again and change its packages from `net.gooshy.omodaboard` to `net.gooshy.dashy`.
+
+## Licence
+Apache License 2.0: see `LICENSE` and `NOTICE`. The fonts are under the SIL Open Font License 1.1 (`design/OFL-*.txt`). Anyone redistributing this project, or a modified version, must keep `NOTICE`, which carries this disclaimer.
+
+## Disclaimer
+**This is an unofficial hobby project. You use it entirely at your own risk.**
+
+- **Not endorsed.** It isn't affiliated with, endorsed, sponsored or approved by Omoda, Jaecoo, Chery Automobile, Desay SV, or any other vehicle maker or supplier. All product names and trademarks belong to their owners and are used only to describe the hardware this runs on.
+- **No warranty, no liability.** It's provided "as is", without warranty of any kind, under the Apache License 2.0 (`LICENSE`, sections 7 and 8). To the fullest extent the law allows, the author isn't liable for any damage, injury, loss, fine or other consequence of using it. That includes damage to your car or head unit, voided warranties, and effects on your insurance.
+- **It talks to your car through undocumented interfaces.** Everything it knows about the car was worked out by observation, not from the maker. It may behave differently, or not at all, on another model, market or software version, and a software update from the maker could change that without warning.
+- **It can change a driving setting.** The regen tile writes the energy recovery level, which changes how strongly the car slows down when you lift off the accelerator. Only change it when it's safe, and check the car's own settings screen if in doubt.
+- **It isn't a safety system.** Power, g-force, timings and the other figures are estimates and can be wrong or late. Always rely on the car's own instruments and warnings.
+- **Don't let it distract you.** Don't operate it while driving. You're responsible for following the laws where you drive on screen use and driver distraction.
+- **Warranty and insurance.** Sideloading apps onto the head unit may affect your vehicle warranty or insurance. Check before you install.
+- **Your car, your responsibility.** Use it only on a vehicle you own or have permission to modify, and in line with local law.
+- **No support.** There's no guarantee of updates, fixes or help.
+
+This disclaimer isn't legal advice.
+

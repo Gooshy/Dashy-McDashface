@@ -1,0 +1,20 @@
+Dashy McDashface
+Copyright 2026 Gooshy (https://github.com/Gooshy)
+
+Licensed under the Apache License, Version 2.0 (see LICENSE). The fonts in
+dash/src/main/res/font are licensed separately under the SIL Open Font
+License 1.1 (see design/OFL-SairaCondensed.txt and design/OFL-ShareTechMono.txt).
+
+UNOFFICIAL SOFTWARE. NOT AFFILIATED WITH OR ENDORSED BY ANY VEHICLE MAKER.
+This project is not affiliated with, endorsed, sponsored or approved by
+Omoda, Jaecoo, Chery Automobile, Desay SV, or any other vehicle maker or
+supplier. All product names and trademarks belong to their owners and are
+used only to describe the hardware this software runs on.
+
+USE AT YOUR OWN RISK. This software reads undocumented vehicle interfaces
+and can change a vehicle setting (the regenerative braking level). It is
+provided "AS IS", without warranty of any kind, and the author accepts no
+liability for any damage, injury, loss, fine or other consequence arising
+from its use, including damage to a vehicle or head unit, voided warranties,
+or effects on insurance. It is not a safety system; its figures are
+estimates and may be wrong. See the Disclaimer section of README.md.
