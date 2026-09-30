@@ -1,9 +1,9 @@
 # Dashy McDashface
 
-Omoda Dash: a live driver's dashboard for the Omoda 9 plug-in hybrid's centre screen (Desay SV head unit, Android 11, 1920 × 720). The look is F1 onboard telemetry crossed with Knight Rider.
+A live driver's dashboard for the Omoda 9 plug-in hybrid's centre screen (Desay SV head unit, Android 11, 1920 × 720). The look is F1 onboard telemetry crossed with Knight Rider.
 
 ## What's on screen
-The "Omoda Dash" Claude Design project (`design/Omoda Dash.dc.html`), rebuilt in Compose at 1920 × 720, with three swipeable pages:
+The "Omoda Dash" Claude Design project (`design/Omoda Dash.dc.html`, the name it has in Claude Design), rebuilt in Compose at 1920 × 720, with three swipeable pages:
 - **RACE:** speed, a g-force circle with a 2-second trail, the 0–60 timer, the power / regen bar, gear, mode, brake, and the shift lights.
 - **ENERGY:** battery %, EV range, consumption, regen against drive time, and the engine panel.
 - **CAR:** tyres, steering, yaw, outside temperature, session bests, and trip data.
@@ -56,10 +56,12 @@ Create `local.properties` with `sdk.dir=<path to your Android SDK>` first. It is
 The release build is signed with the debug key: the app is sideloaded onto one car.
 
 ## Install on the car
+The app is `net.gooshy.dashy`. Up to version 1.3.1 it was "Omoda Dash" (`net.gooshy.omodadash`), which Android treats as a different app: uninstall that one. Personal bests start again.
+
 The head unit blocks installs over ADB, so:
 1. Copy `dash-release.apk` to a FAT32 or exFAT USB stick and plug it into the car.
 2. Open the APK in the file manager.
-3. Open Omoda Dash parked and allow the permission prompts.
+3. Open Dashy McDashface parked and allow the permission prompts.
 
 ## Layout
 | Path | What |
@@ -75,4 +77,4 @@ The head unit blocks installs over ADB, so:
 | `design/` | The Claude Design mock-up the app is built from, and the font licences (SIL OFL). |
 | `docs/DASHBOARD-PROMPT.md` | The design brief. |
 
-`core` is copied from the OmodaBoard recorder, where the car's channels are identified. Copy it across again when new channels are added there.
+`core` is copied from the OmodaBoard recorder, where the car's channels are identified. When channels are added there, copy `core/` across again and change its packages from `net.gooshy.omodaboard` to `net.gooshy.dashy`.

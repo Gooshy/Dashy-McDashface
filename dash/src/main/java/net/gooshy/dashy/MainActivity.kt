@@ -1,4 +1,4 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 import android.content.pm.PackageManager
 import android.content.pm.PermissionInfo
@@ -12,7 +12,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 
 /**
- * Omoda Dash: full screen, screen kept on, reading the car while it's in
+ * Dashy McDashface: full screen, screen kept on, reading the car while it's in
  * front. Nothing runs when it isn't.
  */
 class MainActivity : ComponentActivity() {

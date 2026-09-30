@@ -1,4 +1,4 @@
-package net.gooshy.omodaboard.vdbus
+package net.gooshy.dashy.vdbus
 
 import android.content.ComponentName
 import android.content.Context

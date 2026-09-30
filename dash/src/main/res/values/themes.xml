@@ -3,7 +3,7 @@
     <color name="background">#FF000000</color>
     <color name="icon_background">#FF1A0907</color>
     <!-- Compose draws everything; this only has to survive until setContent runs. -->
-    <style name="Theme.OmodaDash" parent="android:Theme.Material.NoActionBar">
+    <style name="Theme.Dashy" parent="android:Theme.Material.NoActionBar">
         <item name="android:windowBackground">@color/background</item>
         <item name="android:statusBarColor">@color/background</item>
         <item name="android:navigationBarColor">@color/background</item>

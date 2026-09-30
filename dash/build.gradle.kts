@@ -4,22 +4,22 @@ plugins {
     alias(libs.plugins.kotlin.compose)
 }
 
-// Omoda Dash: the driver's dashboard. Reads only the channels already
+// Dashy McDashface: the driver's dashboard. Reads only the channels already
 // identified (see core's KnownChannels) and draws them. No recording, no
-// discovery sweep, no export: that's the OmodaBoard app's job.
+// discovery sweep, no export: that's the OmodaBoard recorder's job.
 android {
-    namespace = "net.gooshy.omodadash"
+    namespace = "net.gooshy.dashy"
     compileSdk = 35
 
     // CarPropertyManager, for speed / gear / brake. Optional at runtime.
     useLibrary("android.car")
 
     defaultConfig {
-        applicationId = "net.gooshy.omodadash"
+        applicationId = "net.gooshy.dashy"
         minSdk = 30
         targetSdk = 30 // the head unit is Android 11
-        versionCode = 5
-        versionName = "1.3.1"
+        versionCode = 6
+        versionName = "2.0.0"
     }
 
     buildTypes {

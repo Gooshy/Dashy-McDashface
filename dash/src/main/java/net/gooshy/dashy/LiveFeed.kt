@@ -1,4 +1,4 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 import android.car.Car
 import android.car.VehiclePropertyIds
@@ -12,10 +12,10 @@ import android.hardware.SensorManager
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import net.gooshy.omodaboard.core.KnownChannels
-import net.gooshy.omodaboard.vdbus.VdBusReader
-import net.gooshy.omodaboard.vdbus.VdModules
-import net.gooshy.omodaboard.vdbus.VdService
+import net.gooshy.dashy.core.KnownChannels
+import net.gooshy.dashy.vdbus.VdBusReader
+import net.gooshy.dashy.vdbus.VdModules
+import net.gooshy.dashy.vdbus.VdService
 
 /**
  * Reads the car for the dashboard: only the channels in [KnownChannels]

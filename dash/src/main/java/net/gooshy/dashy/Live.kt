@@ -1,7 +1,7 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 import android.os.SystemClock
-import net.gooshy.omodaboard.core.KnownChannels
+import net.gooshy.dashy.core.KnownChannels
 import java.util.concurrent.ConcurrentHashMap
 
 /**

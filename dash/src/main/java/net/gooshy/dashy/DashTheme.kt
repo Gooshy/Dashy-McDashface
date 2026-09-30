@@ -1,4 +1,4 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.ui.Modifier
@@ -15,7 +15,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import net.gooshy.omodadash.R
+import net.gooshy.dashy.R
 import kotlin.math.tan
 
 /** Colour tokens from the design's `TH` table. */

@@ -1,4 +1,4 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 import android.content.SharedPreferences
 import android.os.SystemClock
@@ -80,7 +80,7 @@ import kotlin.math.min
 import kotlin.math.roundToInt
 
 /*
- * The "Omoda Dash" design (Claude Design project e783a14e…, `Omoda Dash.dc.html`)
+ * The "Omoda Dash" design, as it's named in Claude Design (project e783a14e…, `Omoda Dash.dc.html`)
  * rebuilt in Compose. Everything is laid out in the design's own 1920 × 720
  * pixel grid: the root overrides the density so that 1.dp = 1 design pixel,
  * scaled to whatever the screen really is (on the car, 1920 × 720 at 160 dpi,

@@ -1,4 +1,4 @@
-package net.gooshy.omodaboard.core
+package net.gooshy.dashy.core
 
 /**
  * What the raw channels mean, as far as drives have established it.

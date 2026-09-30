@@ -1,4 +1,4 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 /**
  * Battery power, estimated from how the car is moving: the bus carries no

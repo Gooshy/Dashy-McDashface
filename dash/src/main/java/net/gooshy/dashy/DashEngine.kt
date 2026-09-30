@@ -1,4 +1,4 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 import kotlin.math.PI
 import kotlin.math.abs

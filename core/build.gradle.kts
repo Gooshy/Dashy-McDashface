@@ -6,7 +6,7 @@ plugins {
 // Shared by both apps: the read-only Desay VDBus client and the decode table of
 // identified channels. No UI, no recording.
 android {
-    namespace = "net.gooshy.omodaboard.shared"
+    namespace = "net.gooshy.dashy.shared"
     compileSdk = 35
 
     defaultConfig {

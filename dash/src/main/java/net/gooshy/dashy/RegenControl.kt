@@ -1,4 +1,4 @@
-package net.gooshy.omodadash
+package net.gooshy.dashy
 
 import android.content.ComponentName
 import android.content.Context
@@ -8,8 +8,8 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.Parcel
 import android.os.SystemClock
-import net.gooshy.omodaboard.vdbus.VdBus
-import net.gooshy.omodaboard.vdbus.VdService
+import net.gooshy.dashy.vdbus.VdBus
+import net.gooshy.dashy.vdbus.VdService
 
 /**
  * The dashboard's one write to the car: the regen level, `NEW_ENERGY` 37.

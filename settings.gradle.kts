@@ -22,6 +22,6 @@ dependencyResolutionManagement {
 
 rootProject.name = "Dashy-McDashface"
 // core: the read-only car-bus client and the channel decode table
-//       (a copy of OmodaBoard's :core; identified channels are added there first).
-// dash: Omoda Dash, the driver's dashboard.
+//       (a copy of the OmodaBoard recorder's :core, where channels are identified).
+// dash: Dashy McDashface, the driver's dashboard.
 include(":core", ":dash")
